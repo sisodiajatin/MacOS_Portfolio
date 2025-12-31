@@ -7,7 +7,7 @@ body {
     width: 100dvw;
     overflow: hidden;
     height: 100dvh;
-    background-image: url("/images/wallpaper.png");
+    background-image: url("/images/wallpaper3.jpg");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
@@ -168,41 +168,41 @@ body {
         h2 {
             @apply font-bold text-sm text-center w-full;
         }
+    }
 
-        .techstack {
-            @apply text-sm font-roboto p-5;
+    .techstack {
+        @apply text-sm font-roboto p-5;
 
-            .label {
-                @apply flex items-center ms-10 mt-7;
-            }
+        .label {
+            @apply flex items-center ms-10 mt-7;
+        }
 
-            .content {
-                @apply py-5 my-5 border-y border-dashed space-y-1;
+        .content {
+            @apply py-5 my-5 border-y border-dashed space-y-1;
 
-                li {
-                    .check {
-                        @apply text-[#00A154] w-5;
-                    }
+            li {
+                .check {
+                    @apply text-[#00A154] w-5;
+                }
 
-                    h3 {
-                        @apply font-semibold text-[#00A154] w-32 ms-5;
-                    }
+                h3 {
+                    @apply font-semibold text-[#00A154] w-32 ms-5;
+                }
 
-                    ul {
-                        @apply flex items-center gap-3;
-                    }
+                ul {
+                    @apply flex items-center gap-3;
                 }
             }
+        }
 
-            .footnote {
-                @apply text-[#00A154] space-y-1;
+        .footnote {
+            @apply text-[#00A154] space-y-1;
 
-                p {
-                    @apply flex items-center;
+            p {
+                @apply flex items-center;
 
-                    svg {
-                        @apply w-5 me-5;
-                    }
+                svg {
+                    @apply w-5 me-5;
                 }
             }
         }
