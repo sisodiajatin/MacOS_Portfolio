@@ -1,10 +1,9 @@
-import React from 'react'
-import Navbar from "#hoc/Navbar.jsx";
-
+import {Navbar, Welcome} from "#components"
 const App = () => {
     return (
        <main>
            <Navbar/>
+           <Welcome/>
        </main>
     )
 }
