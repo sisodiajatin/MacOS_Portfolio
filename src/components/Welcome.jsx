@@ -19,7 +19,7 @@ const renderText = (text, className, baseWeight = 400) => {
     ))
 }
 const setupTextHover = (container, type) =>{
-    if (!container) return;
+    if (!container) return () => {};
 
     const letters = container.querySelectorAll("span");
     const {min, max, default: base} = FONT_WEIGHTS[type];
@@ -40,7 +40,7 @@ const setupTextHover = (container, type) =>{
             const letterRect = letter.getBoundingClientRect();
             const letterCenterX = letterRect.left - containerRect.left + letterRect.width / 2;
             const distance = Math.abs(mouseX - letterCenterX);
-            const intensity = Math.exp(-(distance ** 2) / 2000);
+            const intensity = Math.exp(-(distance ** 2) / 20000);
 
             animateLetter(letter, min + (max - min) * intensity);
         })
@@ -82,7 +82,7 @@ const Welcome = () => {
 
             <div className="small-screen">
                 <p>
-                    This Portfolio is designed for desktop/tabled screens only.
+                    This Portfolio is designed for desktop/tablet screens only.
                 </p>
             </div>
         </section>
