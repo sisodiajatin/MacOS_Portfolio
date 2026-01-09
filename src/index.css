@@ -7,10 +7,18 @@ body {
     width: 100dvw;
     overflow: hidden;
     height: 100dvh;
-    background-image: url("/images/wallpaper3.jpg");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
+    background-color: #0a0a0a;
+}
+
+/* Live Wallpaper */
+.live-wallpaper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
 }
 
 @theme {
@@ -33,7 +41,8 @@ body {
 
 @layer base {
     main {
-        @apply w-dvw h-dvh overflow-hidden;
+        @apply w-dvw h-dvh overflow-hidden relative;
+        z-index: 1;
     }
 
     nav {

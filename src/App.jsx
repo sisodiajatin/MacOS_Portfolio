@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { gsap } from "gsap";
 import { Draggable } from "gsap/Draggable";
 
-import { Navbar, Welcome, Dock, Home, BootScreen, Spotlight, ContextMenu, MusicWidget } from "#components";
+import { Navbar, Welcome, Dock, Home, BootScreen, Spotlight, ContextMenu, MusicWidget, LiveWallpaper } from "#components";
 import { Resume, Safari, Terminal, Finder, Text, Image, Contact, Photos, CodeEditor } from "#windows";
 import useWindowStore from "#store/window.js";
 
@@ -92,6 +92,8 @@ const App = () => {
     return (
         <>
             {isBooting && <BootScreen onComplete={handleBootComplete} />}
+            
+            <LiveWallpaper darkMode={darkMode} />
             
             <main 
                 className={darkMode ? "dark-mode" : ""}

@@ -8,6 +8,7 @@ import Spotlight from "#components/Spotlight.jsx";
 import ControlCenter from "#components/ControlCenter.jsx";
 import ContextMenu from "#components/ContextMenu.jsx";
 import MusicWidget from "#components/MusicWidget.jsx";
+import LiveWallpaper from "#components/LiveWallpaper.jsx";
 
 export {
   Navbar,
@@ -20,4 +21,5 @@ export {
   ControlCenter,
   ContextMenu,
   MusicWidget,
+  LiveWallpaper,
 };
