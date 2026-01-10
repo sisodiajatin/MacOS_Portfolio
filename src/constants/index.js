@@ -73,12 +73,6 @@ const dockApps = [
     canOpen: true,
   },
   {
-    id: "codeeditor",
-    name: "Code Editor",
-    icon: "vscode-dark_.png",
-    canOpen: true,
-  },
-  {
     id: "trash",
     name: "Archive", // was "Trash"
     icon: "trash.png",

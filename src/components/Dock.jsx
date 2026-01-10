@@ -8,9 +8,10 @@ import useTrashStore from "#store/trash.js"
 
 const Dock = () => {
     const { openWindow, closeWindow, windows } = useWindowStore();
-    const { emptyTrash, trashedItems } = useTrashStore();
+    const { emptyTrash, trashedItems, addToTrash } = useTrashStore();
     const dockRef = useRef(null);
     const [showTrashMenu, setShowTrashMenu] = useState(false);
+    const [isTrashDragOver, setIsTrashDragOver] = useState(false);
 
     useGSAP(() => {
         const dock = dockRef.current;
@@ -84,7 +85,7 @@ const Dock = () => {
 
     const handleEmptyTrash = () => {
         if (trashedItems.length === 0) return;
-        
+
         // Animate trash icon
         const trashIcon = dockRef.current?.querySelector('[aria-label="Archive"]');
         if (trashIcon) {
@@ -105,20 +106,64 @@ const Dock = () => {
         }
     };
 
+    const handleDragOver = (e, appId) => {
+        if (appId !== "trash") return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+        setIsTrashDragOver(true);
+    };
+
+    const handleDragLeave = (e, appId) => {
+        if (appId !== "trash") return;
+        setIsTrashDragOver(false);
+    };
+
+    const handleDrop = (e, appId) => {
+        if (appId !== "trash") return;
+        e.preventDefault();
+        setIsTrashDragOver(false);
+
+        try {
+            const data = e.dataTransfer.getData("application/json");
+            if (data) {
+                const item = JSON.parse(data);
+                addToTrash(item);
+
+                // Animate trash icon on drop
+                const trashIcon = dockRef.current?.querySelector('[aria-label="Archive"]');
+                if (trashIcon) {
+                    gsap.fromTo(trashIcon,
+                        { scale: 1.3 },
+                        {
+                            scale: 1,
+                            duration: 0.3,
+                            ease: "elastic.out(1, 0.3)"
+                        }
+                    );
+                }
+            }
+        } catch (error) {
+            console.error("Error parsing dropped item:", error);
+        }
+    };
+
   return (
     <section id="dock">
         <div ref={dockRef} className="dock-container">
             {dockApps.map (({ id, name, icon, canOpen }) =>(
                 <div key={id} className="relative flex justify-center">
-                    <button 
-                        type="button" 
-                        className="dock-icon" 
+                    <button
+                        type="button"
+                        className={`dock-icon ${id === "trash" && isTrashDragOver ? "scale-125 transition-transform" : ""}`}
                         aria-label={name}
-                        data-tooltip-id="dock-tooltip" 
-                        data-tooltip-content={id === "trash" ? `${name} (${trashedItems.length} items)` : name} 
-                        data-tooltip-delay-show={150} 
-                        disabled={!canOpen && id !== "trash"} 
+                        data-tooltip-id="dock-tooltip"
+                        data-tooltip-content={id === "trash" ? `${name} (${trashedItems.length} items)` : name}
+                        data-tooltip-delay-show={150}
+                        disabled={!canOpen && id !== "trash"}
                         onClick={() => toggleApp({id, canOpen})}
+                        onDragOver={(e) => handleDragOver(e, id)}
+                        onDragLeave={(e) => handleDragLeave(e, id)}
+                        onDrop={(e) => handleDrop(e, id)}
                     >
                         <img
                             src={`/images/${icon}`}
