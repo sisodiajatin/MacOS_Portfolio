@@ -26,7 +26,13 @@ const WindowWrapper = (Component, windowKey) => {
           const el = ref.current;
           if (!el) return;
 
-          const [instance] = Draggable.create(el, { onPress: () => focusWindow(windowKey) });
+          // Find the header element to use as drag trigger
+          const header = el.querySelector('#window-header');
+
+          const [instance] = Draggable.create(el, { 
+              trigger: header || el, // Only drag from header, fallback to whole element
+              onPress: () => focusWindow(windowKey),
+          });
 
           return () => instance.kill();
       }, []);
@@ -38,9 +44,17 @@ const WindowWrapper = (Component, windowKey) => {
             el.style.display = isOpen ? "block" : "none";
         }, [isOpen]);
 
-      return (<section id={windowKey} ref={ref} style={{zIndex}} className="absolute">
-          <Component {...props} />
-      </section>)
+      return (
+          <section 
+              id={windowKey} 
+              ref={ref} 
+              style={{zIndex}} 
+              className="absolute"
+              onMouseDown={() => focusWindow(windowKey)}
+          >
+              <Component {...props} />
+          </section>
+      )
     };
 
     Wrapped.displayName = `WindowWrapper(${Component.displayName || Component.name || "Component"})`;

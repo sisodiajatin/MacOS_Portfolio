@@ -62,6 +62,11 @@ const MusicWidget = () => {
 
     const currentTrack = playlist[currentTrackIndex];
 
+    const goToNextTrack = () => {
+        setProgress(0);
+        setCurrentTrackIndex((prev) => (prev === playlist.length - 1 ? 0 : prev + 1));
+    };
+
     // Animation
     useGSAP(() => {
         if (!widgetRef.current) return;
@@ -81,7 +86,7 @@ const MusicWidget = () => {
             progressInterval.current = setInterval(() => {
                 setProgress((prev) => {
                     if (prev >= 100) {
-                        handleNext();
+                        goToNextTrack();
                         return 0;
                     }
                     return prev + (100 / currentTrack.duration) * 0.5;
@@ -104,8 +109,7 @@ const MusicWidget = () => {
     };
 
     const handleNext = () => {
-        setProgress(0);
-        setCurrentTrackIndex((prev) => (prev === playlist.length - 1 ? 0 : prev + 1));
+        goToNextTrack();
     };
 
     const formatTime = (seconds) => {

@@ -6,20 +6,17 @@ import {
     FileText,
     Image,
     Info,
-    Settings,
-    RefreshCw,
     Layout,
     ArrowUpDown,
     Eye,
     Trash2,
-    Copy,
-    Scissors,
-    Clipboard,
 } from "lucide-react";
 import useWindowStore from "#store/window.js";
 import useLocationStore from "#store/location.js";
 import useTrashStore from "#store/trash.js";
 import { locations } from "#constants";
+
+let trashCounter = 1;
 
 const ContextMenu = ({ isOpen, position, onClose }) => {
     const menuRef = useRef(null);
@@ -88,14 +85,16 @@ const ContextMenu = ({ isOpen, position, onClose }) => {
                     emptyTrash();
                 }
                 break;
-            case "add-demo-trash":
+            case "add-demo-trash": {
                 // Demo: Add item to trash
+                const itemId = trashCounter++;
                 addToTrash({
-                    id: Date.now(),
-                    name: `Deleted Item ${Date.now()}`,
+                    id: `item-${itemId}`,
+                    name: `Deleted Item ${itemId}`,
                     type: "file",
                 });
                 break;
+            }
             default:
                 break;
         }

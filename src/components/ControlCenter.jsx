@@ -89,14 +89,15 @@ const ControlCenter = ({ isOpen, onClose, darkMode, onDarkModeChange }) => {
                 <div className="control-section">
                     <h3 className="control-section-title">Appearance</h3>
                     <div className="theme-options">
-                        {themeOptions.map(({ id, label, icon: Icon, value }) => (
+                        {/* eslint-disable-next-line no-unused-vars */}
+                        {themeOptions.map(({ id, label, icon: ThemeIcon, value }) => (
                             <button
                                 key={id}
                                 className={`theme-option ${currentTheme === id ? "active" : ""}`}
                                 onClick={() => onDarkModeChange(value)}
                             >
                                 <div className="theme-option-icon">
-                                    <Icon className="w-5 h-5" />
+                                    <ThemeIcon className="w-5 h-5" />
                                 </div>
                                 <span>{label}</span>
                                 {currentTheme === id && (

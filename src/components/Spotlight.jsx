@@ -115,17 +115,15 @@ const Spotlight = ({ isOpen, onClose }) => {
             .slice(0, 8);
     }, [query, searchableItems]);
 
-    // Reset selection when results change
-    useEffect(() => {
-        setSelectedIndex(0);
-    }, [results]);
-
     // Focus input when opened
     useEffect(() => {
         if (isOpen) {
-            setQuery("");
-            setSelectedIndex(0);
-            setTimeout(() => inputRef.current?.focus(), 100);
+            // Use setTimeout to avoid synchronous setState cascade
+            setTimeout(() => {
+                setQuery("");
+                setSelectedIndex(0);
+                inputRef.current?.focus();
+            }, 50);
         }
     }, [isOpen]);
 

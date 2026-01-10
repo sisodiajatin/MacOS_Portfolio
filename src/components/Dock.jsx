@@ -8,7 +8,7 @@ import useTrashStore from "#store/trash.js"
 
 const Dock = () => {
     const { openWindow, closeWindow, windows } = useWindowStore();
-    const { isEmpty, emptyTrash, trashedItems } = useTrashStore();
+    const { emptyTrash, trashedItems } = useTrashStore();
     const dockRef = useRef(null);
     const [showTrashMenu, setShowTrashMenu] = useState(false);
 

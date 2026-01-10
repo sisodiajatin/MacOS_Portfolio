@@ -31,4 +31,18 @@ export default defineConfig({
       ),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Split Monaco Editor into its own chunk (loaded on demand)
+          'monaco-editor': ['@monaco-editor/react', 'monaco-editor'],
+          // Split Three.js / Shader Gradient into its own chunk
+          'shader-gradient': ['@shadergradient/react', 'three', '@react-three/fiber'],
+          // Split vendor libraries
+          'vendor': ['react', 'react-dom', 'zustand', 'gsap'],
+        },
+      },
+    },
+  },
 });
