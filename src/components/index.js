@@ -9,6 +9,7 @@ import ControlCenter from "#components/ControlCenter.jsx";
 import ContextMenu from "#components/ContextMenu.jsx";
 import MusicWidget from "#components/MusicWidget.jsx";
 import LiveWallpaper from "#components/LiveWallpaper.jsx";
+import CursorPet from "#components/CursorPet.jsx";
 
 export {
   Navbar,
@@ -22,4 +23,5 @@ export {
   ContextMenu,
   MusicWidget,
   LiveWallpaper,
+  CursorPet,
 };

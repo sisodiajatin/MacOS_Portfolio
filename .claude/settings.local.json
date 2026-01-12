@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "Bash(git fetch:*)",
+      "Bash(find:*)",
+      "Bash(dir:*)",
+      "Bash(ren:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(npm run lint)"
+    ],
+    "deny": [],
+    "ask": [],
+    "additionalDirectories": [
+      "D:\\MacOS_Portfolio-main\\MacOS_Portfolio-main\\src"
+    ]
+  }
+}

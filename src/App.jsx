@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { gsap } from "gsap";
 import { Draggable } from "gsap/Draggable";
 
-import { Navbar, Welcome, Dock, Home, BootScreen, Spotlight, ContextMenu, MusicWidget, LiveWallpaper } from "#components";
+import { Navbar, Welcome, Dock, Home, BootScreen, Spotlight, ContextMenu, MusicWidget, LiveWallpaper, CursorPet } from "#components";
 import { Resume, Safari, Terminal, Finder, Text, Image, Contact, Photos, CodeEditor } from "#windows";
 import useWindowStore from "#store/window.js";
 
@@ -131,6 +131,8 @@ const App = () => {
                 />
 
                 <MusicWidget />
+
+                <CursorPet />
             </main>
         </>
     );

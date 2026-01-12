@@ -83,18 +83,17 @@ const dockApps = [
 const blogPosts = [
   {
     id: 1,
-    date: "Sep 2, 2025",
-    title:
-      "TypeScript Explained: What It Is, Why It Matters, and How to Master It",
+    date: "Jan 11, 2026",
+    title: "Inside a Scholarly Search Engine: Indexing, Ranking, and Retrieval",
     image: "/images/blog1.png",
-    link: "https://jsmastery.com/blog/typescript-explained-what-it-is-why-it-matters-and-how-to-master-it",
+    link: "https://dev.to/sisodiajatin/inside-a-scholarly-search-engine-indexing-ranking-and-retrieval-pea",
   },
   {
     id: 2,
-    date: "Aug 28, 2025",
-    title: "The Ultimate Guide to Mastering Three.js for 3D Development",
+    date: "Jan 11, 2026",
+    title: "Your Face is the Playlist: Building an Emotion-Aware Android App",
     image: "/images/blog2.png",
-    link: "https://jsmastery.com/blog/the-ultimate-guide-to-mastering-three-js-for-3d-development",
+    link: "https://dev.to/sisodiajatin/your-face-is-the-playlist-building-an-emotion-aware-android-app-4e6o",
   },
   {
     id: 3,
