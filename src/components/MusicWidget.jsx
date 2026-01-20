@@ -18,6 +18,46 @@ import useDynamicIslandStore from "#store/dynamicIsland.js";
 // Jamendo API client ID (using public access - no key needed for basic features)
 const JAMENDO_CLIENT_ID = "56d30c95";
 
+// Fallback playlist with sample royalty-free tracks
+const FALLBACK_PLAYLIST = [
+    {
+        id: 1,
+        title: "Chill Vibes",
+        artist: "Sample Artist",
+        album: "Demo Album",
+        duration: 180,
+        cover: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&h=300&fit=crop",
+        audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+    },
+    {
+        id: 2,
+        title: "Ambient Dreams",
+        artist: "Demo Band",
+        album: "Test Album",
+        duration: 200,
+        cover: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop",
+        audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+    },
+    {
+        id: 3,
+        title: "Electronic Pulse",
+        artist: "Sample Music",
+        album: "Preview",
+        duration: 190,
+        cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop",
+        audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+    },
+    {
+        id: 4,
+        title: "Peaceful Moments",
+        artist: "Demo Artist",
+        album: "Sample Collection",
+        duration: 210,
+        cover: "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=300&h=300&fit=crop",
+        audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
+    },
+];
+
 const MusicWidget = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
@@ -57,11 +97,16 @@ const MusicWidget = () => {
                     audioUrl: track.audio,
                 }));
                 setPlaylist(tracks);
+            } else {
+                // API returned no results, use fallback
+                console.log("Jamendo API returned no results, using fallback playlist");
+                setPlaylist(FALLBACK_PLAYLIST);
             }
         } catch (error) {
             console.error("Failed to fetch Jamendo tracks:", error);
-            // Fallback to empty playlist
-            setPlaylist([]);
+            // Use fallback playlist instead of empty
+            console.log("Using fallback playlist");
+            setPlaylist(FALLBACK_PLAYLIST);
         } finally {
             setIsLoading(false);
         }
