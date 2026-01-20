@@ -17,7 +17,7 @@ const DynamicIsland = ({ darkMode }) => {
     const [showGithub, setShowGithub] = useState(false);
 
     // Store state
-    const { music, github, weather, islandState, notification, clearNotification, setGithubData, setWeatherData } =
+    const { music, github, weather, islandState, notification, musicControls, clearNotification, setGithubData, setWeatherData } =
         useDynamicIslandStore();
 
     // Fetch Weather data
@@ -375,17 +375,35 @@ const DynamicIsland = ({ darkMode }) => {
                     </div>
                 </div>
                 <div className="island-controls">
-                    <button className="island-control-btn">
+                    <button
+                        className="island-control-btn"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            musicControls.prevTrack?.();
+                        }}
+                    >
                         <SkipBack className="w-4 h-4" />
                     </button>
-                    <button className="island-control-btn play">
+                    <button
+                        className="island-control-btn play"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            musicControls.togglePlay?.();
+                        }}
+                    >
                         {music.isPlaying ? (
                             <Pause className="w-5 h-5" />
                         ) : (
                             <Play className="w-5 h-5 ml-0.5" />
                         )}
                     </button>
-                    <button className="island-control-btn">
+                    <button
+                        className="island-control-btn"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            musicControls.nextTrack?.();
+                        }}
+                    >
                         <SkipForward className="w-4 h-4" />
                     </button>
                 </div>

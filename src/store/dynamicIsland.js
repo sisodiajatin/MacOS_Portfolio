@@ -14,6 +14,13 @@ const useDynamicIslandStore = create(
             progress: 0,
         },
 
+        // Music control callbacks (set by MusicWidget)
+        musicControls: {
+            togglePlay: null,
+            nextTrack: null,
+            prevTrack: null,
+        },
+
         // GitHub activity state (fetched from API)
         github: {
             username: GITHUB_USERNAME,
@@ -56,6 +63,11 @@ const useDynamicIslandStore = create(
                 } else if (!musicData.isPlaying && state.islandState === "music") {
                     state.islandState = "idle";
                 }
+            }),
+
+        setMusicControls: (controls) =>
+            set((state) => {
+                state.musicControls = controls;
             }),
 
         setGithubData: (githubData) =>

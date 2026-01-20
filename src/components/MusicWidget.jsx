@@ -75,6 +75,7 @@ const MusicWidget = () => {
 
     // Sync state to Dynamic Island store
     const setMusicState = useDynamicIslandStore((s) => s.setMusicState);
+    const setMusicControls = useDynamicIslandStore((s) => s.setMusicControls);
 
     // Fetch tracks from Jamendo API
     const fetchJamendoTracks = useCallback(async () => {
@@ -131,6 +132,24 @@ const MusicWidget = () => {
         setProgress(0);
         setCurrentTrackIndex((prev) => (prev === playlist.length - 1 ? 0 : prev + 1));
     }, [playlist.length]);
+
+    const handlePlayPauseToggle = useCallback(() => {
+        setIsPlaying((prev) => !prev);
+    }, []);
+
+    const handlePrevTrack = useCallback(() => {
+        setProgress(0);
+        setCurrentTrackIndex((prev) => (prev === 0 ? playlist.length - 1 : prev - 1));
+    }, [playlist.length]);
+
+    // Register music controls with Dynamic Island store
+    useEffect(() => {
+        setMusicControls({
+            togglePlay: handlePlayPauseToggle,
+            nextTrack: goToNextTrack,
+            prevTrack: handlePrevTrack,
+        });
+    }, [handlePlayPauseToggle, goToNextTrack, handlePrevTrack, setMusicControls]);
 
     // Animation
     useGSAP(() => {
