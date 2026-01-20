@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import {
@@ -11,44 +11,12 @@ import {
     X,
     Maximize2,
     Minimize2,
+    Loader2,
 } from "lucide-react";
 import useDynamicIslandStore from "#store/dynamicIsland.js";
 
-// Sample playlist
-const playlist = [
-    {
-        id: 1,
-        title: "Blinding Lights",
-        artist: "The Weeknd",
-        album: "After Hours",
-        duration: 203,
-        cover: "https://i.scdn.co/image/ab67616d0000b2738863bc11d2aa12b54f5aeb36",
-    },
-    {
-        id: 2,
-        title: "Starboy",
-        artist: "The Weeknd ft. Daft Punk",
-        album: "Starboy",
-        duration: 230,
-        cover: "https://i.scdn.co/image/ab67616d0000b2734718e2b124f79258be7bc452",
-    },
-    {
-        id: 3,
-        title: "Save Your Tears",
-        artist: "The Weeknd",
-        album: "After Hours",
-        duration: 215,
-        cover: "https://i.scdn.co/image/ab67616d0000b2738863bc11d2aa12b54f5aeb36",
-    },
-    {
-        id: 4,
-        title: "Levitating",
-        artist: "Dua Lipa",
-        album: "Future Nostalgia",
-        duration: 203,
-        cover: "https://i.scdn.co/image/ab67616d0000b273bd26ede1ae69327010d49946",
-    },
-];
+// Jamendo API client ID (using public access - no key needed for basic features)
+const JAMENDO_CLIENT_ID = "56d30c95";
 
 const MusicWidget = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -57,27 +25,67 @@ const MusicWidget = () => {
     const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
     const [progress, setProgress] = useState(0);
     const [volume, setVolume] = useState(75);
+    const [playlist, setPlaylist] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     const widgetRef = useRef(null);
-    const progressInterval = useRef(null);
+    const audioRef = useRef(null);
 
     const currentTrack = playlist[currentTrackIndex];
 
     // Sync state to Dynamic Island store
     const setMusicState = useDynamicIslandStore((s) => s.setMusicState);
 
-    useEffect(() => {
-        setMusicState({
-            isPlaying,
-            currentTrack: playlist[currentTrackIndex],
-            progress,
-        });
-    }, [isPlaying, currentTrackIndex, progress, setMusicState]);
+    // Fetch tracks from Jamendo API
+    const fetchJamendoTracks = useCallback(async () => {
+        try {
+            setIsLoading(true);
+            // Fetch popular tracks from Jamendo
+            const response = await fetch(
+                `https://api.jamendo.com/v3.0/tracks/?client_id=${JAMENDO_CLIENT_ID}&format=json&limit=10&order=popularity_total&include=musicinfo&audioformat=mp32`
+            );
+            const data = await response.json();
 
-    const goToNextTrack = () => {
+            if (data.results && data.results.length > 0) {
+                const tracks = data.results.map((track) => ({
+                    id: track.id,
+                    title: track.name,
+                    artist: track.artist_name,
+                    album: track.album_name,
+                    duration: track.duration,
+                    cover: track.album_image || track.image,
+                    audioUrl: track.audio,
+                }));
+                setPlaylist(tracks);
+            }
+        } catch (error) {
+            console.error("Failed to fetch Jamendo tracks:", error);
+            // Fallback to empty playlist
+            setPlaylist([]);
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+    // Fetch tracks on mount
+    useEffect(() => {
+        fetchJamendoTracks();
+    }, [fetchJamendoTracks]);
+
+    useEffect(() => {
+        if (currentTrack) {
+            setMusicState({
+                isPlaying,
+                currentTrack,
+                progress,
+            });
+        }
+    }, [isPlaying, currentTrackIndex, progress, setMusicState, currentTrack]);
+
+    const goToNextTrack = useCallback(() => {
         setProgress(0);
         setCurrentTrackIndex((prev) => (prev === playlist.length - 1 ? 0 : prev + 1));
-    };
+    }, [playlist.length]);
 
     // Animation
     useGSAP(() => {
@@ -92,24 +100,59 @@ const MusicWidget = () => {
         }
     }, [isOpen]);
 
-    // Simulate playback progress
+    // Audio element setup and event handlers
     useEffect(() => {
+        const audio = audioRef.current;
+        if (!audio || !currentTrack) return;
+
+        // Load new track
+        audio.src = currentTrack.audioUrl;
+        audio.load();
+
+        // Auto-play if was playing
         if (isPlaying) {
-            progressInterval.current = setInterval(() => {
-                setProgress((prev) => {
-                    if (prev >= 100) {
-                        goToNextTrack();
-                        return 0;
-                    }
-                    return prev + (100 / currentTrack.duration) * 0.5;
-                });
-            }, 500);
-        } else {
-            clearInterval(progressInterval.current);
+            audio.play().catch(error => console.error("Playback failed:", error));
         }
 
-        return () => clearInterval(progressInterval.current);
-    }, [isPlaying, currentTrack.duration]);
+        // Update progress
+        const handleTimeUpdate = () => {
+            const progressPercent = (audio.currentTime / audio.duration) * 100;
+            setProgress(progressPercent);
+        };
+
+        // Track ended - go to next
+        const handleEnded = () => {
+            goToNextTrack();
+        };
+
+        audio.addEventListener("timeupdate", handleTimeUpdate);
+        audio.addEventListener("ended", handleEnded);
+
+        return () => {
+            audio.removeEventListener("timeupdate", handleTimeUpdate);
+            audio.removeEventListener("ended", handleEnded);
+        };
+    }, [currentTrack, isPlaying, goToNextTrack]);
+
+    // Handle play/pause state
+    useEffect(() => {
+        const audio = audioRef.current;
+        if (!audio) return;
+
+        if (isPlaying) {
+            audio.play().catch(error => console.error("Playback failed:", error));
+        } else {
+            audio.pause();
+        }
+    }, [isPlaying]);
+
+    // Handle volume changes
+    useEffect(() => {
+        const audio = audioRef.current;
+        if (audio) {
+            audio.volume = volume / 100;
+        }
+    }, [volume]);
 
     const handlePlayPause = () => {
         setIsPlaying(!isPlaying);
@@ -124,13 +167,42 @@ const MusicWidget = () => {
         goToNextTrack();
     };
 
+    const handleProgressClick = (e) => {
+        const audio = audioRef.current;
+        if (!audio || !currentTrack) return;
+
+        const progressBar = e.currentTarget;
+        const rect = progressBar.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const percentage = clickX / rect.width;
+        const newTime = percentage * audio.duration;
+
+        audio.currentTime = newTime;
+        setProgress(percentage * 100);
+    };
+
     const formatTime = (seconds) => {
+        if (!seconds || isNaN(seconds)) return "0:00";
         const mins = Math.floor(seconds / 60);
         const secs = Math.floor(seconds % 60);
         return `${mins}:${secs.toString().padStart(2, "0")}`;
     };
 
-    const currentTime = (progress / 100) * currentTrack.duration;
+    const currentTime = audioRef.current ? audioRef.current.currentTime : 0;
+
+    // Show loading state
+    if (isLoading) {
+        return (
+            <button className="music-widget-button" disabled>
+                <Loader2 className="w-5 h-5 animate-spin" />
+            </button>
+        );
+    }
+
+    // Don't render if no tracks loaded
+    if (!playlist.length) {
+        return null;
+    }
 
     // Floating button when widget is closed
     if (!isOpen) {
@@ -183,7 +255,11 @@ const MusicWidget = () => {
 
             {/* Progress Bar */}
             <div className="music-progress">
-                <div className="music-progress-bar">
+                <div
+                    className="music-progress-bar"
+                    onClick={handleProgressClick}
+                    style={{ cursor: 'pointer' }}
+                >
                     <div
                         className="music-progress-fill"
                         style={{ width: `${progress}%` }}
@@ -252,6 +328,9 @@ const MusicWidget = () => {
                     </ul>
                 </div>
             )}
+
+            {/* Hidden audio element for playback */}
+            <audio ref={audioRef} preload="metadata" />
         </div>
     );
 };
