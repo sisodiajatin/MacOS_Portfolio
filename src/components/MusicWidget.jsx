@@ -12,6 +12,7 @@ import {
     Maximize2,
     Minimize2,
 } from "lucide-react";
+import useDynamicIslandStore from "#store/dynamicIsland.js";
 
 // Sample playlist
 const playlist = [
@@ -61,6 +62,17 @@ const MusicWidget = () => {
     const progressInterval = useRef(null);
 
     const currentTrack = playlist[currentTrackIndex];
+
+    // Sync state to Dynamic Island store
+    const setMusicState = useDynamicIslandStore((s) => s.setMusicState);
+
+    useEffect(() => {
+        setMusicState({
+            isPlaying,
+            currentTrack: playlist[currentTrackIndex],
+            progress,
+        });
+    }, [isPlaying, currentTrackIndex, progress, setMusicState]);
 
     const goToNextTrack = () => {
         setProgress(0);

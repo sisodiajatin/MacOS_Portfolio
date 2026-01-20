@@ -196,8 +196,8 @@ const Dock = () => {
 
         {/* Click outside to close trash menu */}
         {showTrashMenu && (
-            <div 
-                className="fixed inset-0 z-40" 
+            <div
+                className="fixed inset-0 z-9989"
                 onClick={() => setShowTrashMenu(false)}
             />
         )}

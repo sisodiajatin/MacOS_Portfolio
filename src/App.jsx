@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { gsap } from "gsap";
 import { Draggable } from "gsap/Draggable";
 
-import { Navbar, Welcome, Dock, Home, BootScreen, Spotlight, ContextMenu, MusicWidget, LiveWallpaper, CursorPet } from "#components";
+import { Navbar, Welcome, Dock, Home, BootScreen, Spotlight, ContextMenu, MusicWidget, LiveWallpaper, CursorPet, DynamicIsland } from "#components";
 import { Resume, Safari, Terminal, Finder, Text, Image, Contact, Photos, CodeEditor } from "#windows";
 import useWindowStore from "#store/window.js";
 
@@ -99,11 +99,14 @@ const App = () => {
                 className={darkMode ? "dark-mode" : ""}
                 onContextMenu={handleContextMenu}
             >
-                <Navbar 
-                    onSpotlightOpen={() => setSpotlightOpen(true)} 
+                <Navbar
+                    onSpotlightOpen={() => setSpotlightOpen(true)}
                     darkMode={darkMode}
                     onDarkModeChange={setDarkMode}
                 />
+
+                {!isBooting && <DynamicIsland darkMode={darkMode} />}
+
                 <Welcome />
                 <Dock />
 

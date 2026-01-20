@@ -88,7 +88,7 @@ body {
     }
 
     #dock {
-        @apply absolute bottom-5 left-1/2 -translate-x-1/2 z-50 select-none max-sm:hidden;
+        @apply absolute bottom-5 left-1/2 -translate-x-1/2 z-9990 select-none max-sm:hidden;
 
         .dock-container {
             @apply bg-white/20 backdrop-blur-md justify-between rounded-2xl p-1.5 flex items-end gap-1.5;
@@ -305,6 +305,12 @@ body {
                 @apply grid grid-cols-5 grid-rows-5 gap-2.5;
 
                 li {
+                    @apply cursor-pointer transition-transform duration-200;
+
+                    &:hover {
+                        @apply scale-105;
+                    }
+
                     img {
                         @apply size-full object-cover rounded-lg;
                     }
@@ -1260,6 +1266,698 @@ body {
 
         .battery-section {
             @apply text-gray-300;
+        }
+    }
+
+    /* ========================================
+       DYNAMIC ISLAND - Obsidian Glow Theme
+       ======================================== */
+
+    .dynamic-island {
+        position: fixed;
+        top: 52px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9990;
+        cursor: pointer;
+        user-select: none;
+
+        /* Compact state dimensions - more pill-like */
+        width: 150px;
+        height: 37px;
+
+        /* The "Obsidian" core */
+        background: linear-gradient(
+            135deg,
+            rgba(10, 10, 12, 0.95) 0%,
+            rgba(20, 20, 25, 0.98) 50%,
+            rgba(10, 10, 12, 0.95) 100%
+        );
+
+        /* Perfect pill shape - border-radius = half of height */
+        border-radius: 18.5px;
+
+        /* Glowing edge effect */
+        box-shadow:
+            0 0 0 1px rgba(255, 255, 255, 0.1),
+            0 0 20px rgba(100, 100, 120, 0.15),
+            0 4px 16px rgba(0, 0, 0, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+        /* Morph transition */
+        transition:
+            width 400ms cubic-bezier(0.34, 1.56, 0.64, 1),
+            height 400ms cubic-bezier(0.34, 1.56, 0.64, 1),
+            border-radius 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+        /* Performance */
+        will-change: width, height, border-radius;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+
+        /* Overflow for content transitions */
+        overflow: hidden;
+    }
+
+    /* Animated glow ring (pseudo-element) */
+    .dynamic-island::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(120, 120, 180, 0.1),
+            rgba(180, 120, 255, 0.15),
+            rgba(120, 120, 180, 0.1),
+            transparent
+        );
+        background-size: 200% 100%;
+        animation: island-shimmer 4s ease-in-out infinite;
+        opacity: 0.7;
+    }
+
+    @keyframes island-shimmer {
+        0%, 100% { background-position: -200% 0; }
+        50% { background-position: 200% 0; }
+    }
+
+    /* Hover state - enhanced glow */
+    .dynamic-island:hover {
+        box-shadow:
+            0 0 0 1px rgba(255, 255, 255, 0.15),
+            0 0 30px rgba(140, 100, 255, 0.2),
+            0 0 60px rgba(100, 100, 180, 0.1),
+            0 6px 24px rgba(0, 0, 0, 0.5),
+            inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .dynamic-island:hover::before {
+        opacity: 1;
+        animation-duration: 2s;
+    }
+
+    /* ========================================
+       ISLAND STATES - Size Variations
+       ======================================== */
+
+    /* Expanded state (hover or click) */
+    .dynamic-island.expanded {
+        width: 340px;
+        height: 180px;
+        border-radius: 40px;
+    }
+
+    /* Music playing state (slightly wider but still pill-shaped) */
+    .dynamic-island.music-active {
+        width: 260px;
+        height: 37px;
+        border-radius: 18.5px;
+    }
+
+    .dynamic-island.music-active.expanded {
+        width: 340px;
+        height: 200px;
+        border-radius: 40px;
+    }
+
+    /* Notification state (temporary expansion) */
+    .dynamic-island.notification {
+        width: 280px;
+        height: 44px;
+        border-radius: 22px;
+    }
+
+    /* ========================================
+       ISLAND CONTENT
+       ======================================== */
+
+    .island-content {
+        @apply w-full h-full flex items-center justify-center;
+        padding: 8px 16px;
+    }
+
+    /* Time/Greeting text */
+    .island-clock {
+        @apply text-white/90 text-sm font-medium tracking-wide;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Activity indicator dots */
+    .island-activity {
+        @apply flex gap-1.5;
+    }
+
+    .island-dot {
+        @apply w-1.5 h-1.5 rounded-full bg-white/40;
+    }
+
+    .island-dot.active {
+        @apply bg-emerald-400;
+        animation: island-pulse-glow 2s ease-in-out infinite;
+    }
+
+    @keyframes island-pulse-glow {
+        0%, 100% {
+            opacity: 0.8;
+            box-shadow: 0 0 4px rgba(52, 211, 153, 0.5);
+        }
+        50% {
+            opacity: 1;
+            box-shadow: 0 0 8px rgba(52, 211, 153, 0.8);
+        }
+    }
+
+    /* Separator */
+    .island-separator {
+        @apply w-px h-3 bg-white/20 mx-2;
+    }
+
+    /* ========================================
+       COMPACT IDLE VIEW
+       ======================================== */
+
+    .island-idle {
+        @apply flex items-center justify-center;
+    }
+
+    /* ========================================
+       COMPACT MUSIC VIEW
+       ======================================== */
+
+    .island-music-compact {
+        @apply flex items-center gap-3 w-full;
+    }
+
+    .island-album-art {
+        @apply w-7 h-7 rounded-md overflow-hidden flex-shrink-0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .island-album-art img {
+        @apply w-full h-full object-cover;
+    }
+
+    .island-track-info {
+        @apply flex-1 min-w-0;
+    }
+
+    .island-track-title {
+        @apply text-white/90 text-xs font-medium truncate;
+    }
+
+    .island-track-artist {
+        @apply text-white/50 text-[10px] truncate;
+    }
+
+    /* Audio visualizer bars */
+    .island-visualizer {
+        @apply flex items-end gap-0.5 h-4;
+    }
+
+    .island-bar {
+        @apply w-0.5 bg-emerald-400 rounded-full;
+        animation: island-equalizer 0.8s ease-in-out infinite;
+    }
+
+    .island-bar:nth-child(1) { height: 8px; }
+    .island-bar:nth-child(2) { height: 12px; animation-delay: 0.2s; }
+    .island-bar:nth-child(3) { height: 6px; animation-delay: 0.4s; }
+    .island-bar:nth-child(4) { height: 14px; animation-delay: 0.1s; }
+
+    @keyframes island-equalizer {
+        0%, 100% { transform: scaleY(0.3); }
+        50% { transform: scaleY(1); }
+    }
+
+    .island-bar.paused {
+        animation: none;
+        opacity: 0.5;
+        transform: scaleY(0.3);
+    }
+
+    /* ========================================
+       EXPANDED VIEW
+       ======================================== */
+
+    .island-expanded-content {
+        @apply flex flex-col w-full h-full p-4 gap-3;
+        animation: island-fadeIn 200ms ease-out forwards;
+    }
+
+    @keyframes island-fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    /* Expanded greeting */
+    .island-greeting-large {
+        @apply text-white/90 text-lg font-medium text-center;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+    }
+
+    /* Stats row */
+    .island-stats {
+        @apply flex items-center justify-center gap-4;
+    }
+
+    .island-stat {
+        @apply flex items-center gap-2 text-white/70;
+    }
+
+    .island-stat-value {
+        @apply text-white font-semibold text-lg;
+    }
+
+    .island-stat-label {
+        @apply text-xs text-white/50;
+    }
+
+    .island-stat-divider {
+        @apply w-px h-6 bg-white/20;
+    }
+
+    .island-time-large {
+        @apply text-white/50 text-xs text-center mt-auto;
+    }
+
+    /* Expanded music view */
+    .island-music-expanded {
+        @apply flex gap-4;
+    }
+
+    .island-album-large {
+        @apply w-20 h-20 rounded-xl overflow-hidden flex-shrink-0;
+        box-shadow:
+            0 4px 16px rgba(0, 0, 0, 0.4),
+            0 0 0 1px rgba(255, 255, 255, 0.05);
+    }
+
+    .island-album-large img {
+        @apply w-full h-full object-cover;
+    }
+
+    .island-music-details {
+        @apply flex-1 flex flex-col justify-center min-w-0;
+    }
+
+    .island-music-title {
+        @apply text-white font-semibold text-base truncate;
+    }
+
+    .island-music-artist {
+        @apply text-white/60 text-sm truncate;
+    }
+
+    /* Progress bar in expanded view */
+    .island-progress {
+        @apply w-full mt-3;
+    }
+
+    .island-progress-bar {
+        @apply w-full h-1 bg-white/20 rounded-full overflow-hidden;
+    }
+
+    .island-progress-fill {
+        @apply h-full bg-white rounded-full;
+        transition: width 200ms linear;
+    }
+
+    .island-progress-time {
+        @apply flex justify-between text-[10px] text-white/50 mt-1;
+    }
+
+    /* Playback controls in expanded */
+    .island-controls {
+        @apply flex items-center justify-center gap-6 mt-2;
+    }
+
+    .island-control-btn {
+        @apply p-2 rounded-full text-white/80 hover:text-white hover:bg-white/10 transition-all;
+    }
+
+    .island-control-btn.play {
+        @apply bg-white text-black hover:bg-white/90 p-3;
+    }
+
+    /* ========================================
+       NOTIFICATION VIEW
+       ======================================== */
+
+    .island-notification {
+        @apply flex items-center gap-3 w-full;
+    }
+
+    .island-notif-icon {
+        @apply w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center;
+    }
+
+    .island-notif-icon img {
+        @apply w-4 h-4;
+    }
+
+    .island-notif-text {
+        @apply text-white/90 text-sm font-medium;
+    }
+
+    /* ========================================
+       DARK MODE ADJUSTMENTS (Enhanced)
+       ======================================== */
+
+    .dynamic-island.dark {
+        background: linear-gradient(
+            135deg,
+            rgba(5, 5, 8, 0.98) 0%,
+            rgba(15, 15, 20, 0.99) 50%,
+            rgba(5, 5, 8, 0.98) 100%
+        );
+
+        box-shadow:
+            0 0 0 1px rgba(255, 255, 255, 0.05),
+            0 0 25px rgba(80, 80, 100, 0.2),
+            0 4px 20px rgba(0, 0, 0, 0.6),
+            inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    }
+
+    .dynamic-island.dark:hover {
+        box-shadow:
+            0 0 0 1px rgba(255, 255, 255, 0.08),
+            0 0 40px rgba(100, 80, 200, 0.25),
+            0 0 80px rgba(80, 80, 140, 0.15),
+            0 8px 32px rgba(0, 0, 0, 0.7),
+            inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    /* ========================================
+       GITHUB ACTIVITY VIEW
+       ======================================== */
+
+    /* GitHub active state (slightly wider but pill-shaped) */
+    .dynamic-island.github-active {
+        width: 220px;
+        height: 37px;
+        border-radius: 18.5px;
+    }
+
+    .dynamic-island.github-active.expanded {
+        width: 340px;
+        height: 180px;
+        border-radius: 40px;
+    }
+
+    /* Compact GitHub view */
+    .island-github-compact {
+        @apply flex items-center gap-2 w-full cursor-pointer;
+        transition: opacity 150ms ease;
+    }
+
+    .island-github-compact:hover {
+        opacity: 0.8;
+    }
+
+    .island-github-expanded {
+        @apply cursor-pointer;
+    }
+
+    .island-github-expanded:hover .island-github-header {
+        @apply text-white;
+    }
+
+    .island-github-icon {
+        @apply w-6 h-6 rounded-md bg-white/10 flex items-center justify-center flex-shrink-0;
+    }
+
+    .island-github-icon svg {
+        @apply text-white/80;
+    }
+
+    .island-github-info {
+        @apply flex-1 min-w-0;
+    }
+
+    .island-github-commit {
+        @apply flex items-center gap-1 text-white/70 text-xs;
+    }
+
+    .island-github-commit svg {
+        @apply text-white/50;
+    }
+
+    /* Streak counter */
+    .island-streak {
+        @apply flex items-center gap-1;
+    }
+
+    .island-streak-count {
+        @apply text-white font-bold text-sm;
+        text-shadow: 0 0 10px rgba(251, 146, 60, 0.5);
+    }
+
+    /* Animated typing indicator */
+    .island-typing {
+        @apply flex items-center gap-0.5 ml-1;
+    }
+
+    .island-typing-dot {
+        @apply w-1 h-1 rounded-full bg-emerald-400;
+        animation: island-typing-bounce 1.4s ease-in-out infinite;
+    }
+
+    .island-typing-dot:nth-child(1) {
+        animation-delay: 0s;
+    }
+
+    .island-typing-dot:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .island-typing-dot:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+
+    @keyframes island-typing-bounce {
+        0%, 60%, 100% {
+            transform: translateY(0);
+            opacity: 0.5;
+        }
+        30% {
+            transform: translateY(-4px);
+            opacity: 1;
+        }
+    }
+
+    /* ========================================
+       EXPANDED GITHUB VIEW
+       ======================================== */
+
+    .island-github-header {
+        @apply flex items-center gap-2 text-white/90 text-sm font-medium;
+    }
+
+    .island-coding-indicator {
+        @apply flex items-center gap-1 ml-auto text-emerald-400 text-xs;
+    }
+
+    .island-coding-text {
+        @apply opacity-80;
+    }
+
+    .island-typing-cursor {
+        @apply w-0.5 h-3 bg-emerald-400;
+        animation: island-cursor-blink 1s ease-in-out infinite;
+    }
+
+    @keyframes island-cursor-blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+    }
+
+    .island-github-stats {
+        @apply flex items-center justify-center gap-6 mt-3;
+    }
+
+    .island-github-stat {
+        @apply flex items-center gap-2;
+    }
+
+    .island-github-stat-content {
+        @apply flex flex-col;
+    }
+
+    .island-github-stat-value {
+        @apply text-white font-bold text-xl leading-tight;
+    }
+
+    .island-github-stat-label {
+        @apply text-white/50 text-xs;
+    }
+
+    .island-github-recent {
+        @apply mt-3 pt-3 border-t border-white/10;
+    }
+
+    .island-github-recent-item {
+        @apply flex items-center gap-2 text-xs;
+    }
+
+    .island-github-message {
+        @apply text-white/70 truncate flex-1;
+    }
+
+    .island-github-time {
+        @apply text-white/40 flex-shrink-0;
+    }
+
+    /* ========================================
+       WEATHER COMPACT VIEW
+       ======================================== */
+
+    .dynamic-island.weather-active {
+        width: 280px;
+        height: 37px;
+        border-radius: 18.5px;
+    }
+
+    .dynamic-island.weather-active.expanded {
+        width: 360px;
+        height: 260px;
+        border-radius: 40px;
+    }
+
+    .island-weather-compact {
+        @apply flex items-center justify-between gap-3 px-4 w-full;
+    }
+
+    .island-weather-icon {
+        @apply flex items-center justify-center;
+    }
+
+    .island-weather-icon img {
+        @apply w-8 h-8 object-contain;
+        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+    }
+
+    .island-weather-info {
+        @apply flex flex-col flex-1;
+    }
+
+    .island-weather-temp {
+        @apply text-white font-semibold text-sm leading-tight;
+    }
+
+    .island-weather-location {
+        @apply text-white/60 text-xs;
+    }
+
+    .island-weather-condition {
+        @apply text-white/70 text-xs font-medium;
+    }
+
+    /* ========================================
+       WEATHER EXPANDED VIEW
+       ======================================== */
+
+    .island-weather-expanded {
+        @apply flex flex-col gap-2;
+        padding: 12px 16px;
+    }
+
+    .island-weather-header {
+        @apply flex flex-col items-center;
+    }
+
+    .island-weather-current {
+        @apply flex items-center gap-3;
+    }
+
+    .island-weather-icon-large {
+        @apply w-20 h-20 object-contain;
+        filter: drop-shadow(0 0 16px rgba(255, 255, 255, 0.4));
+        animation: weather-float 3s ease-in-out infinite;
+    }
+
+    @keyframes weather-float {
+        0%, 100% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(-8px);
+        }
+    }
+
+    .island-weather-main {
+        @apply flex flex-col;
+    }
+
+    .island-weather-temp-large {
+        @apply text-white font-bold text-4xl leading-none;
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    }
+
+    .island-weather-condition-text {
+        @apply text-white/80 text-xs mt-0.5;
+    }
+
+    .island-weather-location-text {
+        @apply text-white/50 text-[10px] mt-0.5;
+    }
+
+    .island-weather-details {
+        @apply flex items-center justify-around gap-2 py-1.5 px-3;
+        @apply bg-white/5 rounded-lg border border-white/10;
+        backdrop-filter: blur(10px);
+    }
+
+    .island-weather-detail {
+        @apply flex flex-col items-center gap-0.5;
+    }
+
+    .island-weather-detail-label {
+        @apply text-white/50 text-[10px];
+    }
+
+    .island-weather-detail-value {
+        @apply text-white font-semibold text-xs;
+    }
+
+    .island-weather-forecast {
+        @apply flex items-center justify-around gap-1.5 mt-1.5;
+    }
+
+    .island-forecast-day {
+        @apply flex flex-col items-center gap-0.5 p-1.5 rounded-lg;
+        @apply bg-white/5 border border-white/10;
+        backdrop-filter: blur(10px);
+        transition: all 200ms ease;
+    }
+
+    .island-forecast-day:hover {
+        @apply bg-white/10;
+        transform: translateY(-2px);
+    }
+
+    .island-forecast-date {
+        @apply text-white/60 text-[10px] font-medium;
+    }
+
+    .island-forecast-icon {
+        @apply w-6 h-6 object-contain;
+    }
+
+    .island-forecast-temp {
+        @apply text-white font-semibold text-xs;
+    }
+
+    /* ========================================
+       RESPONSIVE - Hide on Mobile
+       ======================================== */
+
+    @media (max-width: 640px) {
+        .dynamic-island {
+            display: none;
         }
     }
 }

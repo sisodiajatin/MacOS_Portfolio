@@ -10,6 +10,7 @@ import ContextMenu from "#components/ContextMenu.jsx";
 import MusicWidget from "#components/MusicWidget.jsx";
 import LiveWallpaper from "#components/LiveWallpaper.jsx";
 import CursorPet from "#components/CursorPet.jsx";
+import DynamicIsland from "#components/DynamicIsland.jsx";
 
 export {
   Navbar,
@@ -24,4 +25,5 @@ export {
   MusicWidget,
   LiveWallpaper,
   CursorPet,
+  DynamicIsland,
 };

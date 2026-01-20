@@ -538,8 +538,9 @@ const CodeEditor = () => {
                         </button>
                         {showLangMenu && (
                             <>
-                                <div 
-                                    className="fixed inset-0 z-40" 
+                                <div
+                                    className="fixed inset-0"
+                                    style={{ zIndex: -1 }}
                                     onClick={() => setShowLangMenu(false)}
                                 />
                                 <div className="absolute right-0 top-full mt-1 w-36 bg-[#2d2d2d] rounded-lg shadow-xl z-50 py-1">
