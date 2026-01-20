@@ -597,7 +597,7 @@ body {
 
     /* Music Widget */
     .music-widget-button {
-        @apply fixed bottom-24 right-5 z-50 w-12 h-12 bg-white/80 backdrop-blur-xl rounded-full shadow-lg flex items-center justify-center text-gray-700 hover:bg-white hover:scale-105 transition-all cursor-pointer border border-white/50;
+        @apply fixed bottom-24 right-5 z-9991 w-12 h-12 bg-white/80 backdrop-blur-xl rounded-full shadow-lg flex items-center justify-center text-gray-700 hover:bg-white hover:scale-105 transition-all cursor-pointer border border-white/50;
     }
 
     .music-playing-indicator {
@@ -605,7 +605,7 @@ body {
     }
 
     .music-widget {
-        @apply fixed bottom-24 right-5 z-50 w-72 bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/50 overflow-hidden;
+        @apply fixed bottom-24 right-5 z-9991 w-72 bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/50 overflow-hidden;
 
         &.expanded {
             @apply w-80;
