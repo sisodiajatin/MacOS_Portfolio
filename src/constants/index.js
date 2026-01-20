@@ -366,15 +366,6 @@ const WORK_LOCATION = {
           position: "top-10 right-20",
         },
         {
-          id: 4,
-          name: "food-delivery-app.png",
-          icon: "/images/image.png",
-          kind: "file",
-          fileType: "img",
-          position: "top-52 right-80",
-          imageUrl: "/images/project-3.png",
-        },
-        {
           id: 5,
           name: "Design.fig",
           icon: "/images/plain.png",
