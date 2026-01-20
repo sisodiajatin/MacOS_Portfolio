@@ -1397,6 +1397,9 @@ body {
     .island-content {
         @apply w-full h-full flex items-center justify-center;
         padding: 8px 16px;
+        will-change: opacity;
+        transform: translateZ(0);
+        backface-visibility: hidden;
     }
 
     /* Time/Greeting text */
@@ -1404,6 +1407,9 @@ body {
         @apply text-white/90 text-sm font-medium tracking-wide;
         font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
         text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        font-variant-numeric: tabular-nums;
+        min-width: 70px;
+        text-align: center;
     }
 
     /* Activity indicator dots */
@@ -1949,6 +1955,46 @@ body {
 
     .island-forecast-temp {
         @apply text-white font-semibold text-xs;
+    }
+
+    /* ========================================
+       NAVIGATION & VIEW INDICATORS
+       ======================================== */
+
+    .island-navigation {
+        @apply absolute top-3 left-0 right-0 flex items-center justify-between px-3 pointer-events-none;
+        z-index: 10;
+    }
+
+    .island-nav-arrow {
+        @apply w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white/60 hover:text-white hover:bg-white/20 transition-all pointer-events-auto;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .island-nav-arrow:hover {
+        transform: scale(1.1);
+    }
+
+    .island-nav-arrow:active {
+        transform: scale(0.95);
+    }
+
+    .island-view-indicator {
+        @apply flex items-center justify-center gap-1.5 mt-3;
+    }
+
+    .island-indicator-dot {
+        @apply w-1.5 h-1.5 rounded-full bg-white/30 transition-all cursor-pointer hover:bg-white/50;
+        border: none;
+        padding: 0;
+    }
+
+    .island-indicator-dot.active {
+        @apply w-6 bg-white;
+    }
+
+    .island-indicator-dot:hover {
+        transform: scale(1.2);
     }
 
     /* ========================================

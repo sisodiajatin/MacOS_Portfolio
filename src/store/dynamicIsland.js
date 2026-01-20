@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
-// GitHub username - change this to update the profile
-export const GITHUB_USERNAME = "sisodiajatin";
+// GitHub username - configured via environment variable
+export const GITHUB_USERNAME = import.meta.env.VITE_GITHUB_USERNAME || "sisodiajatin";
 export const GITHUB_PROFILE_URL = `https://github.com/${GITHUB_USERNAME}`;
 
 const useDynamicIslandStore = create(

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
-import { Play, Pause, SkipBack, SkipForward, Code, GitCommit, Flame, Github, Clock, ExternalLink, Loader2 } from "lucide-react";
+import { Play, Pause, SkipBack, SkipForward, Code, GitCommit, Flame, Github, Clock, ExternalLink, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import useDynamicIslandStore, { GITHUB_USERNAME, GITHUB_PROFILE_URL } from "#store/dynamicIsland.js";
@@ -23,9 +23,9 @@ const DynamicIsland = ({ darkMode }) => {
     // Fetch Weather data
     const fetchWeatherData = useCallback(async () => {
         try {
-            // Worcester, MA coordinates
-            const latitude = 42.2626;
-            const longitude = -71.8023;
+            // Weather location coordinates (from environment or default to Worcester, MA)
+            const latitude = import.meta.env.VITE_WEATHER_LAT || 42.2626;
+            const longitude = import.meta.env.VITE_WEATHER_LON || -71.8023;
 
             // Using Open-Meteo API (free, no API key required)
             const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&temperature_unit=celsius&wind_speed_unit=kmh&timezone=America/New_York`;
@@ -259,21 +259,63 @@ const DynamicIsland = ({ darkMode }) => {
 
     // Cycle between idle, GitHub, and Weather views (when not playing music)
     const [currentView, setCurrentView] = useState(0); // 0: idle, 1: github, 2: weather
+    const [manualControl, setManualControl] = useState(false); // Track manual navigation
+    const manualControlTimeoutRef = useRef(null);
 
+    // Auto-cycle only when not manually controlled
     useEffect(() => {
-        if (music.isPlaying || isExpanded) return;
+        if (music.isPlaying || isExpanded || manualControl) return;
 
         const cycleInterval = setInterval(() => {
             setCurrentView((prev) => (prev + 1) % 3); // Cycle through 0, 1, 2
         }, 5000); // Toggle every 5 seconds
 
         return () => clearInterval(cycleInterval);
-    }, [music.isPlaying, isExpanded]);
+    }, [music.isPlaying, isExpanded, manualControl]);
+
+    // Reset manual control after 15 seconds of inactivity
+    const handleManualViewChange = (newView) => {
+        setCurrentView(newView);
+        setManualControl(true);
+
+        // Clear existing timeout
+        if (manualControlTimeoutRef.current) {
+            clearTimeout(manualControlTimeoutRef.current);
+        }
+
+        // Reset to auto-cycle after 15 seconds
+        manualControlTimeoutRef.current = setTimeout(() => {
+            setManualControl(false);
+        }, 15000);
+    };
+
+    // Navigate to previous view
+    const handlePrevView = (e) => {
+        e.stopPropagation();
+        const newView = currentView === 0 ? 2 : currentView - 1;
+        handleManualViewChange(newView);
+    };
+
+    // Navigate to next view
+    const handleNextView = (e) => {
+        e.stopPropagation();
+        const newView = (currentView + 1) % 3;
+        handleManualViewChange(newView);
+    };
 
     // Update showGithub based on currentView for backward compatibility
     useEffect(() => {
         setShowGithub(currentView === 1);
     }, [currentView]);
+
+    // Cleanup manual control timeout on unmount
+    useEffect(() => {
+        return () => {
+            if (manualControlTimeoutRef.current) {
+                clearTimeout(manualControlTimeoutRef.current);
+            }
+        };
+    }, []);
 
     // Notification auto-dismiss
     useEffect(() => {
@@ -308,9 +350,9 @@ const DynamicIsland = ({ darkMode }) => {
         gsap.fromTo(
             contentRef.current,
             { opacity: 0 },
-            { opacity: 1, duration: 0.15, ease: "power2.out" }
+            { opacity: 1, duration: 0.2, ease: "power2.out" }
         );
-    }, [islandState, isExpanded, music.isPlaying, showGithub]);
+    }, [islandState, isExpanded, music.isPlaying, currentView]);
 
     // Determine current state class
     const getStateClass = () => {
@@ -411,9 +453,47 @@ const DynamicIsland = ({ darkMode }) => {
         );
     };
 
+    // Render navigation arrows
+    const renderNavigationArrows = () => (
+        <div className="island-navigation">
+            <button
+                className="island-nav-arrow"
+                onClick={handlePrevView}
+                title="Previous view"
+            >
+                <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+                className="island-nav-arrow"
+                onClick={handleNextView}
+                title="Next view"
+            >
+                <ChevronRight className="w-4 h-4" />
+            </button>
+        </div>
+    );
+
+    // Render view indicator dots
+    const renderViewIndicator = () => (
+        <div className="island-view-indicator">
+            {[0, 1, 2].map((index) => (
+                <button
+                    key={index}
+                    className={`island-indicator-dot ${currentView === index ? "active" : ""}`}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        handleManualViewChange(index);
+                    }}
+                    title={index === 0 ? "Home" : index === 1 ? "GitHub" : "Weather"}
+                />
+            ))}
+        </div>
+    );
+
     // Render expanded idle view
     const renderExpandedIdle = () => (
         <div className="island-expanded-content">
+            {renderNavigationArrows()}
             <div className="island-greeting-large">
                 <span>{greeting}, explorer</span>
             </div>
@@ -433,6 +513,7 @@ const DynamicIsland = ({ darkMode }) => {
             <div className="island-time-large">
                 {currentTime.format("dddd, MMMM D")}
             </div>
+            {renderViewIndicator()}
         </div>
     );
 
@@ -537,6 +618,7 @@ const DynamicIsland = ({ darkMode }) => {
     // Render expanded weather view
     const renderExpandedWeather = () => (
         <div className="island-expanded-content island-weather-expanded">
+            {renderNavigationArrows()}
             <div className="island-weather-header">
                 <div className="island-weather-current">
                     <img
@@ -582,12 +664,14 @@ const DynamicIsland = ({ darkMode }) => {
                     ))}
                 </div>
             )}
+            {renderViewIndicator()}
         </div>
     );
 
     // Render expanded GitHub view
     const renderExpandedGithub = () => (
         <div className="island-expanded-content island-github-expanded" onClick={openGithubProfile}>
+            {renderNavigationArrows()}
             <div className="island-github-header">
                 <Github className="w-5 h-5" />
                 <span>@{GITHUB_USERNAME}</span>
@@ -633,6 +717,7 @@ const DynamicIsland = ({ darkMode }) => {
                     </div>
                 </div>
             )}
+            {renderViewIndicator()}
         </div>
     );
 

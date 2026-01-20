@@ -16,7 +16,7 @@ import {
 import useDynamicIslandStore from "#store/dynamicIsland.js";
 
 // Jamendo API client ID (using public access - no key needed for basic features)
-const JAMENDO_CLIENT_ID = "56d30c95";
+const JAMENDO_CLIENT_ID = import.meta.env.VITE_JAMENDO_CLIENT_ID || "56d30c95";
 
 // Fallback playlist with sample royalty-free tracks
 const FALLBACK_PLAYLIST = [
@@ -100,13 +100,10 @@ const MusicWidget = () => {
                 setPlaylist(tracks);
             } else {
                 // API returned no results, use fallback
-                console.log("Jamendo API returned no results, using fallback playlist");
                 setPlaylist(FALLBACK_PLAYLIST);
             }
         } catch (error) {
-            console.error("Failed to fetch Jamendo tracks:", error);
             // Use fallback playlist instead of empty
-            console.log("Using fallback playlist");
             setPlaylist(FALLBACK_PLAYLIST);
         } finally {
             setIsLoading(false);
